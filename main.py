@@ -21,11 +21,11 @@ class Saito:
         self.software()
 
     def software(self):
-        for i in range(5):
+        for i in range(6):
             frase = self.ouvir()
 
-            if i == 5:
-                self.falar("Notei uma certa inatividade no sistema, irei encerrar por agora, okay? Até mais!")
+            if frase == None:
+                frase = "."
 
             if "fechar" in frase:
                 self.falar("Tudo bem, fico por aqui então! Até logo!")
@@ -40,6 +40,12 @@ class Saito:
                 self.abrirSoftware(frase)
                 sleep(5)
                 i=0
+
+            if i == 5:
+                self.falar("Notei uma certa inatividade no sistema, irei encerrar por agora, okay? Até mais!")
+                break
+
+            i += 1
 
     def gravarUsuario(self):
         import config
@@ -67,10 +73,10 @@ class Saito:
                 audio = mic.listen(gravacao)
                 texto = mic.recognize_google(audio, language="pt-BR")
                 return texto
-            except srLib.UnknownValueError:
+            except:
                 print(erro)
 
-    def falar(self, texto):
+    def falar(self, texto, erro = "Desculpa, não consegui repetir essa frase, podemos tentar novamente?"):
         print(texto)
         try:
             if self.microfone is None:
@@ -106,7 +112,10 @@ class Saito:
             self.voz.say(texto)
             self.voz.runAndWait()
         except:
-            print(f"""Erro ao falar""")
+            self.voz.setProperty("voice", self.microfone)
+            self.voz.setProperty("volume", self.volume)
+            self.voz.say(erro)
+            self.voz.runAndWait()
 
     def configurarMicrofone(self):
         self.voz = pyttsx3.init("sapi5")
@@ -121,11 +130,18 @@ class Saito:
         return self.vozes[x].id
 
     def abrirSoftware(self, comando):
-        os.startfile(str(comando).replace("iniciar ",""))
+        try:
+            print(comando)
+            os.startfile(str(comando).lower().replace("iniciar ","") + ".exe")
+        except:
+            self.falar("Não foi possível começar o software, tente novamente")
 
     def abrirPagina(self, pagina):
         wb.open(fr"www.google.com/search?q={pagina}".replace(" ","%20"))
         self.falar("Abrino pesquisa na web")
+
+    def repita(self, texto):
+        self.falar(texto=texto)
 
 if __name__ == '__main__':
     Saito()
