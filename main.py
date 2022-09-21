@@ -89,11 +89,11 @@ class Saito:
             if self.volume == 0.25:
                 self.falar("O volume está no mínimo")
 
-            if texto == "Aumentar o volume" & self.volume < 1:
+            if texto == "Aumentar o volume" and self.volume < 1:
                 self.volume +=  0.25
                 self.falar("O volume está em {}%".format(100*(self.volume/1)))
 
-            if texto == "Diminuir o volume" & self.volume > 0.25:
+            if texto == "Diminuir o volume" and self.volume > 0.25:
                 self.volume -=  0.25
                 self.falar("O volume está em {}%".format(100*(self.volume/1)))
 
