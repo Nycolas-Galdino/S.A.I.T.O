@@ -1,3 +1,4 @@
+import os
 from time import sleep
 import pyttsx3
 import speech_recognition as srLib
@@ -17,9 +18,9 @@ class Saito:
 
         welcome = f"Olá novamente {self.user}!"
         self.falar(welcome)
-        self.inicializar()
+        self.software()
 
-    def inicializar(self):
+    def software(self):
         for i in range(5):
             frase = self.ouvir()
 
@@ -32,6 +33,11 @@ class Saito:
 
             if "pesquisar" in frase:
                 self.abrirPagina(frase.replace("pesquisar",""))
+                sleep(5)
+                i=0
+
+            if "iniciar" in frase:
+                self.abrirSoftware(frase)
                 sleep(5)
                 i=0
 
@@ -53,7 +59,6 @@ class Saito:
 
     def ouvir(self, frase = "*Ouvindo*", erro = "Desculpa, não entendi direito."):
         mic = srLib.Recognizer()
-
         with srLib.Microphone() as gravacao:
             try:
                 mic.adjust_for_ambient_noise(gravacao)
@@ -115,8 +120,8 @@ class Saito:
 
         return self.vozes[x].id
 
-    def abrirSoftware(self):
-        pass
+    def abrirSoftware(self, comando):
+        os.startfile(str(comando).replace("iniciar ",""))
 
     def abrirPagina(self, pagina):
         wb.open(fr"www.google.com/search?q={pagina}".replace(" ","%20"))
