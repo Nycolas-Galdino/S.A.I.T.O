@@ -82,7 +82,6 @@ class Saito:
                 self.voz.setProperty("rate", 350)
 
                 #Volume
-
             if self.volume == 1:
                 self.falar("O volume está no máximo")
 
