@@ -1,7 +1,0 @@
-Olá, meu nome é Saito, prazer em lhe conhecer!
-
-Sou uma IA desenvolvida para lhe fornecer o maior auxílio possível.
-
-Estou programado para ouvir voce através de seu MICROFONE, então, conecte um fone de ouvido com mifrofone ou um microfone mesmo e vamos lá!
-
-Por favor, me diga seu nome!
