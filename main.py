@@ -1,8 +1,11 @@
+import json
 import os
 from time import sleep
 import pyttsx3
+import pywhatkit as pywhatkit
 import speech_recognition as srLib
 import webbrowser as wb
+import wikipedia
 
 
 class Saito:
@@ -16,13 +19,17 @@ class Saito:
 
         self.usuario = self.lerUsuario()
 
-        welcome = f"Olá novamente {self.user}!"
-        self.falar(welcome)
+        self.falar(f"Olá novamente {self.user}")
+
+        with open("db/Dicionário.json","w", encoding="utf-8") as dicionario:
+            self.dados = json.load(dicionario)
+
+
         self.software()
 
     def software(self):
         for i in range(6):
-            frase = self.ouvir()
+            frase = str(self.ouvir()).lower()
 
             if frase == None:
                 frase = "."
@@ -31,14 +38,21 @@ class Saito:
                 self.falar("Tudo bem, fico por aqui então! Até logo!")
                 break
 
+            if "aprender" in frase:
+                self.aprender()
+
             if "pesquisar" in frase:
-                self.abrirPagina(frase.replace("pesquisar",""))
+                self.navegador(frase.replace("pesquisar", ""))
                 sleep(5)
                 i=0
 
             if "iniciar" in frase:
                 self.abrirSoftware(frase)
                 sleep(5)
+                i=0
+
+            if "repetir" in frase:
+                self.falar(texto= str(frase).replace("repetir ", ""), erro= "Desculpe, não conseigo repetir o que você disse, podemos tentar novamente?")
                 i=0
 
             if i == 5:
@@ -49,7 +63,7 @@ class Saito:
 
     def gravarUsuario(self):
         import config
-        config
+        config()
 
         self.user_txt = open("./db/User.txt", "wt", encoding="utf-8")
         user = self.ouvir()
@@ -62,6 +76,18 @@ class Saito:
         self.user_txt.close()
 
         return self.user
+
+    def configurarMicrofone(self):
+        self.voz = pyttsx3.init("sapi5")
+        self.vozes = self.voz.getProperty("voices")
+        x = 0
+
+        for i in self.vozes:
+            if "Saito" in str(i):
+                break
+            x += 1
+
+        return self.vozes[x].id
 
     def ouvir(self, frase = "*Ouvindo*", erro = "Desculpa, não entendi direito."):
         mic = srLib.Recognizer()
@@ -117,18 +143,6 @@ class Saito:
             self.voz.say(erro)
             self.voz.runAndWait()
 
-    def configurarMicrofone(self):
-        self.voz = pyttsx3.init("sapi5")
-        self.vozes = self.voz.getProperty("voices")
-        x = 0
-
-        for i in self.vozes:
-            if "Saito" in str(i):
-                break
-            x += 1
-
-        return self.vozes[x].id
-
     def abrirSoftware(self, comando):
         try:
             print(comando)
@@ -136,12 +150,39 @@ class Saito:
         except:
             self.falar("Não foi possível começar o software, tente novamente")
 
-    def abrirPagina(self, pagina):
+    def navegador(self, pagina):
         wb.open(fr"www.google.com/search?q={pagina}".replace(" ","%20"))
         self.falar("Abrino pesquisa na web")
 
-    def repita(self, texto):
-        self.falar(texto=texto)
+    def wikipedia(self, comando):
+        pesquisa = str(comando).replace("pesquise na wikipedia ", "")
+        self.falar("Só um momento, estou procurando por " + pesquisa)
+        wikipedia.set_lang("pt")
+        resultado = wikipedia.summary(pesquisa,2)
+        self.falar(texto= resultado, erro= "Não encontrei o resultado na Wikipedia.")
+
+    def tocarMusica(self, comando):
+        musica = str(comando).replace("tocar ", "")
+        pywhatkit.playonyt(musica)
+        self.falar("Reproduzindo a música " + musica)
+
+    def aprender(self):
+        self.falar("Qual é a categoria?")
+        categoria = self.ouvir()
+        self.falar("Tudo bem, qual é o ítem que gostaria de aprender?")
+        chave = self.ouvir()
+        self.falar("Qual o valor que você quer atribuir a {}?".format(chave))
+        try:
+            significado = self.ouvir()
+        except:
+            self.falar("Desculpe, não entendi o que disse, poderia escrever para mim?")
+            significado = input("Digite o local do arquivo, um link ou um significado: ")
+
+        with open("db/Dicionário.json", "w", encoding="utf-8") as dicionario:
+            self.dados[categoria][chave] = significado
+            json.dump(str(self.dados).lower(), dicionario, indent=1, ensure_ascii=False)
+            self.falar("Entendi! Já armazenei essa informação!")
+
 
 if __name__ == '__main__':
     Saito()
