@@ -21,7 +21,7 @@ class Saito:
 
         self.falar(f"Olá novamente {self.user}")
 
-        with open("db/Dicionário.json","w", encoding="utf-8") as dicionario:
+        with open("db/Dicionário.json","r", encoding="utf-8") as dicionario:
             self.dados = json.load(dicionario)
 
 
@@ -41,8 +41,13 @@ class Saito:
             if "aprender" in frase:
                 self.aprender()
 
-            if "pesquisar" in frase:
-                self.navegador(frase.replace("pesquisar", ""))
+            if "pesquisar" or "pesquise" in frase:
+                if "wikipédia" in frase:
+                    self.wikipedia(frase)
+
+                else:
+                    self.navegador(frase)
+
                 sleep(5)
                 i=0
 
@@ -151,15 +156,19 @@ class Saito:
             self.falar("Não foi possível começar o software, tente novamente")
 
     def navegador(self, pagina):
-        wb.open(fr"www.google.com/search?q={pagina}".replace(" ","%20"))
-        self.falar("Abrino pesquisa na web")
+        pesquisa = pagina.replace("pesquisar ","").replace("pesquise ","")
+        wb.open(fr"www.google.com/search?q={pesquisa}".replace(" ","%20"))
+        self.falar("Abrindo pesquisa na web")
 
     def wikipedia(self, comando):
-        pesquisa = str(comando).replace("pesquise na wikipedia ", "")
-        self.falar("Só um momento, estou procurando por " + pesquisa)
-        wikipedia.set_lang("pt")
-        resultado = wikipedia.summary(pesquisa,2)
-        self.falar(texto= resultado, erro= "Não encontrei o resultado na Wikipedia.")
+        try:
+            pesquisa = str(comando).replace("pesquisar na wikipédia ", "").replace("pesquise na wikipédia ", "")
+            self.falar("Só um momento, estou procurando por " + pesquisa)
+            wikipedia.set_lang("pt")
+            resultado = wikipedia.summary(pesquisa,2)
+            self.falar(texto= resultado, erro= "Não encontrei o resultado na Wikipedia.")
+        except:
+            self.falar("Não achei o resultado '{}' na wikipédia.".format(pesquisa))
 
     def tocarMusica(self, comando):
         musica = str(comando).replace("tocar ", "")
@@ -178,10 +187,15 @@ class Saito:
             self.falar("Desculpe, não entendi o que disse, poderia escrever para mim?")
             significado = input("Digite o local do arquivo, um link ou um significado: ")
 
-        with open("db/Dicionário.json", "w", encoding="utf-8") as dicionario:
+        try:
             self.dados[categoria][chave] = significado
-            json.dump(str(self.dados).lower(), dicionario, indent=1, ensure_ascii=False)
-            self.falar("Entendi! Já armazenei essa informação!")
+        except:
+            self.dados[categoria] = {}
+            self.dados[categoria][chave] = significado
+
+        with open("db/Dicionário.json", "w", encoding="utf-8") as dicionario:
+             json.dump(str(self.dados).lower().replace('"',''), dicionario, indent=2, ensure_ascii=False)
+             self.falar("Entendi! Já armazenei essa informação!")
 
 
 if __name__ == '__main__':
