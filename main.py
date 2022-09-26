@@ -30,7 +30,6 @@ class Saito(actions):
             if "pesquisar" in frase or "pesquise" in frase:
                 if "wikipédia" in frase:
                     self.wikipedia(frase)
-                    i = 0
 
                 else:
                     self.navegador(frase)
@@ -47,7 +46,12 @@ class Saito(actions):
                 self.falar(texto= str(frase).replace("repetir ", ""), erro="Desculpe, não conseigo repetir o que você disse, podemos tentar novamente?")
                 i=0
 
-            if i == 5:
+            if "música" in frase:
+                self.tocarMusica(frase)
+                sleep(3)
+                i=0
+
+            if i == 10:
                 self.falar("Notei uma certa inatividade no sistema, irei encerrar por agora, okay? Até mais!")
                 break
 

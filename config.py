@@ -1,9 +1,8 @@
 import os
 from time import sleep
-
 import pyttsx3
 
-tts = pyttsx3.init()
+tts = pyttsx3.init("sapi5")
 
 voices = tts.getProperty("voices")
 x=0
@@ -30,7 +29,7 @@ boasVindas = """Olá, meu nome é Saito, prazer em lhe conhecer!
 
 Sou uma IA desenvolvida para lhe fornecer o maior auxílio possível.
 
-Estou programado para ouvir voce através de seu MICROFONE, então, conecte um fone de ouvido com microfone ou um microfone mesmo e vamos lá!
+Estou programado para ouvir você através de seu MICROFONE, então, vamos lá!
 
 Por favor, me diga seu nome!"""
 

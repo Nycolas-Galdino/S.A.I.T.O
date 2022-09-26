@@ -1,6 +1,5 @@
 import json
 import os
-from time import sleep
 import pyttsx3
 import pywhatkit as pywhatkit
 import requests
@@ -28,15 +27,15 @@ class actionsSaito:
 
     def gravarUsuario(self):
         import config
-        config()
+        config
 
-        self.user_txt = open("./db/User.txt", "wt", encoding="utf-8")
+        self.user_txt = open(os.getcwd() + "/db/User.txt", "wt", encoding="utf-8")
         user = self.ouvir()
         print(self.user_txt.write(user))
         self.user_txt.close()
 
     def lerUsuario(self):
-        self.user_txt = open("./db/User.txt", "rt", encoding="utf-8")
+        self.user_txt = open(os.getcwd() + "/db/User.txt", "rt", encoding="utf-8")
         self.user = self.user_txt.read()
         self.user_txt.close()
 
@@ -59,9 +58,9 @@ class actionsSaito:
 
         try:
             with srLib.Microphone() as gravacao:
-                mic.adjust_for_ambient_noise(gravacao)
+                mic.adjust_for_ambient_noise(gravacao, duration=2, )
                 print(frase)
-                audio = mic.listen(gravacao)
+                audio = mic.listen(gravacao, phrase_time_limit=10)
             texto = mic.recognize_google(audio, language="pt-BR")
             print(f"\033[0;49;94m{texto} \033[m")
             return texto
@@ -86,7 +85,7 @@ class actionsSaito:
             self.voz.say(erro)
             self.voz.runAndWait()
 
-    def abrirSoftware(self, comando):
+    def abrirSoftware(self, comando):   #Falta implementar no main.py
         try:
             print(comando)
             os.startfile(str(comando).lower().replace("iniciar ", "") + ".exe")
@@ -111,8 +110,8 @@ class actionsSaito:
         except:
             self.falar("Não achei o resultado '{}' na wikipédia.".format(pesquisa))
 
-    def tocarMusica(self, comando):
-        musica = str(comando).replace("tocar ", "")
+    def tocarMusica(self, comando):   #Falta implementar no main.py
+        musica = str(comando).replace("tocar música ", "")
         pywhatkit.playonyt(musica)
         self.falar("Reproduzindo a música " + musica)
 
@@ -134,7 +133,7 @@ class actionsSaito:
             self.dados[categoria] = {}
             self.dados[categoria][chave] = significado
 
-        with open("db/Dicionário.json", "w", encoding="utf-8") as dicionario:
+        with open(os.getcwd() +"/db/Dicionário.json", "w", encoding="utf-8") as dicionario:
             json.dump(str(self.dados).lower().replace('"', ''), dicionario, indent=2, ensure_ascii=False)
             self.falar("Entendi! Já armazenei essa informação!")
 
@@ -147,7 +146,7 @@ class actionsSaito:
     def senhas(self):
         pass
 
-    def verificarCNPJ(self):
+    def verificarCNPJ(self):   #Falta implementar no main.py
         self.falar("Qual é o CNPJ? diga apenas números")
         cnpj = str(self.ouvir()).replace(" ", "").strip()
         response = requests.get(url=f"https://receitaws.com.br/v1/cnpj/{int(cnpj)}")
@@ -157,9 +156,8 @@ class actionsSaito:
         self.falar(
             fr"""A razão social é {response_json['nome']} e o nome fantasia é {response_json['fantasia']}, caso queira mais informações, seguem descritas abaixo.""")
         print(response_json['ultima_atualizacao'])
-        print(response_json['atividade_principal'])
-        print(response_json['cep'])
-
+        print(f"CEP: {response_json['cep']}")
+        print(f"Endereço completo: {response_json['logradouro']}, {response_json['municipio']}, {str(response_json['uf']).upper()} - {response_json['numero']} \n Complemento: {response_json['complemento']}")
 
     def controleVolume(self, comando):
         if len(comando) <= 50:
