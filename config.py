@@ -7,19 +7,22 @@ tts = pyttsx3.init("sapi5")
 voices = tts.getProperty("voices")
 x=0
 
+print("Estou configurando minha voz...")
+print("Por favor, aceite as permissões para cadastrar minha voz.")
+sleep(3)
+
 for i in voices:
     if "Saito" in str(i):
         print(i)
         break
 
     if i == voices[len(voices) - 1]:
-        os.system("db/Saito.reg")
+        os.system("Saito.reg")
+        x += 1
         break
 
     x += 1
 
-print("Estou configurando minha voz...")
-sleep(3)
 tts.setProperty("voice", voices[x].id)
 print("Pronto! Agora você consegue me ouvir melhor!")
 tts.say("Pronto! Agora você consegue me ouvir melhor!")

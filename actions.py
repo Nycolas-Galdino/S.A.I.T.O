@@ -1,7 +1,7 @@
 import json
 import os
 import pyttsx3
-import pywhatkit as pywhatkit
+import pywhatkit
 import requests
 import speech_recognition as srLib
 import webbrowser as wb
@@ -22,20 +22,20 @@ class actionsSaito:
 
         self.falar(f"Olá novamente {self.user}")
 
-        with open("db/Dicionário.json","r", encoding="utf-8") as dicionario:
+        with open("Dicionário.json", "r", encoding="utf-8") as dicionario:
             self.dados = json.load(dicionario)
 
     def gravarUsuario(self):
         import config
         config
 
-        self.user_txt = open(os.getcwd() + "/db/User.txt", "wt", encoding="utf-8")
+        self.user_txt = open(os.getcwd() + "/User.txt", "wt", encoding="utf-8")
         user = self.ouvir()
         print(self.user_txt.write(user))
         self.user_txt.close()
 
     def lerUsuario(self):
-        self.user_txt = open(os.getcwd() + "/db/User.txt", "rt", encoding="utf-8")
+        self.user_txt = open(os.getcwd() + "/User.txt", "rt", encoding="utf-8")
         self.user = self.user_txt.read()
         self.user_txt.close()
 
@@ -62,7 +62,7 @@ class actionsSaito:
                 print(frase)
                 audio = mic.listen(gravacao, phrase_time_limit=10)
             texto = mic.recognize_google(audio, language="pt-BR")
-            print(f"\033[0;49;94m{texto} \033[m")
+            print(f"Você disse: '{texto}'")
             return texto
         except:
             print(erro)
@@ -133,7 +133,7 @@ class actionsSaito:
             self.dados[categoria] = {}
             self.dados[categoria][chave] = significado
 
-        with open(os.getcwd() +"/db/Dicionário.json", "w", encoding="utf-8") as dicionario:
+        with open(os.getcwd() +"/Dicionário.json", "w", encoding="utf-8") as dicionario:
             json.dump(str(self.dados).lower().replace('"', ''), dicionario, indent=2, ensure_ascii=False)
             self.falar("Entendi! Já armazenei essa informação!")
 
@@ -183,3 +183,33 @@ class actionsSaito:
         if comando == "diminuir o volume" and self.volume > 0.25:
             self.volume -= 0.25
             return self.falar("O volume está em {}%".format(100 * (self.volume / 1)))
+
+    def comandos(self):
+        listaDeComandos = """COMANDOS:
+        
+        Abrir planilhas;
+            #Em Desenvolvimento
+            
+        Abrir Softwares;
+            #Em desenvolvimento;
+            
+        Aprender;
+            #Em desenvolvimento;
+            
+        Ouvir Músicas;
+            Diga "Tocar música" e o nome da música;
+           
+        
+        Pesquisar na Web;
+            Diga "Pesquisar" ou "Pesquise" e o resultado que deseja pesquisar.
+            
+        Pesquisa na Wikipedia;
+            Diga "Pesquisar na wikipédia" ou "Psquise na wikipédia" e o resultado que desejar.
+                
+        Repetir Frase;
+            Diga "Repetir" e a frase que deseja.
+            
+        """
+
+        print(listaDeComandos)
+        self.falar("Esses são meus comandos, posso lhe ajudar em algo mais?")
