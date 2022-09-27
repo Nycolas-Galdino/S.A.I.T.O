@@ -23,6 +23,11 @@ class Saito(actions):
                 self.controleVolume(frase)
                 i=0
 
+            if "comando" in frase:
+                self.comandos()
+                sleep (10)
+                i=0
+
             if "aprender" in frase:
                 self.aprender()
                 i=0
