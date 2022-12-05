@@ -56,6 +56,11 @@ class Saito(actions):
                 sleep(3)
                 i=0
 
+            if "cnpj" in frase:
+                self.verificarCNPJ()
+                sleep(3)
+                i=0
+
             if i == 10:
                 self.falar("Notei uma certa inatividade no sistema, irei encerrar por agora, okay? Até mais!")
                 break

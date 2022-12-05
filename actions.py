@@ -6,6 +6,7 @@ import requests
 import speech_recognition as srLib
 import webbrowser as wb
 import wikipedia
+from ast import literal_eval
 
 
 class actionsSaito:
@@ -20,17 +21,22 @@ class actionsSaito:
 
         self.usuario = self.lerUsuario()
 
-        self.falar(f"Olá novamente {self.user}")
+        self.falar(f"Olá {self.user}, como posso lhe ajudar? \n")
+
+        print("Caso queira ver os comandos, é só falar 'comandos' e aparecerá uma lista de comandos.")
 
         with open("Dicionário.json", "r", encoding="utf-8") as dicionario:
-            self.dados = json.load(dicionario)
+            self.dados = literal_eval(json.load(dicionario))
 
     def gravarUsuario(self):
         import config
         config
 
         self.user_txt = open(os.getcwd() + "/User.txt", "wt", encoding="utf-8")
-        user = self.ouvir()
+        user = self.ouvir(erro="")
+        while user == None:
+            self.falar("Desculpa, não entendi seu nome, poderia repetir?")
+            user = self.ouvir(erro="")
         print(self.user_txt.write(user))
         self.user_txt.close()
 
@@ -100,7 +106,7 @@ class actionsSaito:
     def wikipedia(self, comando):
         try:
             pesquisa = str(comando).replace("pesquisar na wikipédia ", "")
-            pesquisa = str(pesquisa).replace("pesquise na wikipedia ", "")
+            pesquisa = str(pesquisa).replace("pesquise na wikipédia ", "")
             pesquisa.strip()
 
             self.falar("Só um momento, estou procurando por " + pesquisa)
@@ -127,6 +133,8 @@ class actionsSaito:
             self.falar("Desculpe, não entendi o que disse, poderia escrever para mim?")
             significado = input("Digite o local do arquivo, um link ou um significado: ")
 
+
+
         try:
             self.dados[categoria][chave] = significado
         except:
@@ -134,7 +142,7 @@ class actionsSaito:
             self.dados[categoria][chave] = significado
 
         with open(os.getcwd() +"/Dicionário.json", "w", encoding="utf-8") as dicionario:
-            json.dump(str(self.dados).lower().replace('"', ''), dicionario, indent=2, ensure_ascii=False)
+            json.dump(str(self.dados).lower().replace('"', ''), dicionario , indent=2, ensure_ascii=False)
             self.falar("Entendi! Já armazenei essa informação!")
 
     def perguntas(self):
@@ -144,20 +152,29 @@ class actionsSaito:
         pass
 
     def senhas(self):
-        pass
+        with open(os.getcwd() +"/senhas.json", "w", encoding="utf-8") as senhas:
+            senhas = print(literal_eval(json.load(senhas)))
 
     def verificarCNPJ(self):   #Falta implementar no main.py
         self.falar("Qual é o CNPJ? diga apenas números")
         cnpj = str(self.ouvir()).replace(" ", "").strip()
-        response = requests.get(url=f"https://receitaws.com.br/v1/cnpj/{int(cnpj)}")
+        
+        if cnpj == None: 
+            self.falar("Desculpa, não entendi o que disse, por favor, digite o CNPJ desejado utilizando apenas números")
+            cnpj = input("CNPJ => ")            
+        
+        try:
+            response = requests.get(url=f"https://receitaws.com.br/v1/cnpj/{int(cnpj)}")
 
-        response_json = response.json()
+            response_json = response.json()
 
-        self.falar(
-            fr"""A razão social é {response_json['nome']} e o nome fantasia é {response_json['fantasia']}, caso queira mais informações, seguem descritas abaixo.""")
-        print(response_json['ultima_atualizacao'])
-        print(f"CEP: {response_json['cep']}")
-        print(f"Endereço completo: {response_json['logradouro']}, {response_json['municipio']}, {str(response_json['uf']).upper()} - {response_json['numero']} \n Complemento: {response_json['complemento']}")
+            self.falar(
+                fr"""A razão social é {response_json['nome']} e o nome fantasia é {response_json['fantasia']}, caso queira mais informações, seguem descritas abaixo.""")
+            print(response_json['ultima_atualizacao'])
+            print(f"CEP: {response_json['cep']}")
+            print(f"Endereço completo: {response_json['logradouro']}, {response_json['municipio']}, {str(response_json['uf']).upper()} - {response_json['numero']} \n Complemento: {response_json['complemento']}")
+        except:
+            self.falar("Desculpe, não consegui encontrar o CNPJ desejado.")
 
     def controleVolume(self, comando):
         if len(comando) <= 50:
@@ -199,7 +216,6 @@ class actionsSaito:
         Ouvir Músicas;
             Diga "Tocar música" e o nome da música;
            
-        
         Pesquisar na Web;
             Diga "Pesquisar" ou "Pesquise" e o resultado que deseja pesquisar.
             
@@ -208,6 +224,9 @@ class actionsSaito:
                 
         Repetir Frase;
             Diga "Repetir" e a frase que deseja.
+            
+        Pesquisar CNPJ
+            Diga "Pesquisar por CNPJ", isso irá lhe retornar alguns dados do CNPJ desejado.
             
         """
 

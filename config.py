@@ -12,7 +12,6 @@ def verificarVozes():
 
     for i in voices:
         if "Saito" in str(i):
-            print (x)
             return x
 
         x += 1
