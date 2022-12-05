@@ -155,24 +155,20 @@ class actionsSaito:
         with open(os.getcwd() +"/senhas.json", "w", encoding="utf-8") as senhas:
             senhas = print(literal_eval(json.load(senhas)))
 
-    def verificarCNPJ(self):   #Falta implementar no main.py
-        self.falar("Qual é o CNPJ? diga apenas números")
-        cnpj = str(self.ouvir()).replace(" ", "").strip()
-        
-        if cnpj == None: 
-            self.falar("Desculpa, não entendi o que disse, por favor, digite o CNPJ desejado utilizando apenas números")
-            cnpj = input("CNPJ => ")            
+    def verificarCNPJ(self):
+        self.falar("Por favor, digite o CNPJ desejado utilizando apenas números")
+        cnpj = input("CNPJ => ")         
         
         try:
             response = requests.get(url=f"https://receitaws.com.br/v1/cnpj/{int(cnpj)}")
 
             response_json = response.json()
 
-            self.falar(
-                fr"""A razão social é {response_json['nome']} e o nome fantasia é {response_json['fantasia']}, caso queira mais informações, seguem descritas abaixo.""")
+            self.falar(fr"""A razão social é {response_json['nome']} e o nome fantasia é {response_json['fantasia']}, caso queira mais informações, seguem descritas abaixo.""")
             print(response_json['ultima_atualizacao'])
             print(f"CEP: {response_json['cep']}")
-            print(f"Endereço completo: {response_json['logradouro']}, {response_json['municipio']}, {str(response_json['uf']).upper()} - {response_json['numero']} \n Complemento: {response_json['complemento']}")
+            print(f"Endereço completo: {response_json['logradouro']}, {response_json['municipio']}, {str(response_json['uf']).upper()} - {response_json['numero']} \n Complemento: {response_json['complemento']}"
+                  )
         except:
             self.falar("Desculpe, não consegui encontrar o CNPJ desejado.")
 
