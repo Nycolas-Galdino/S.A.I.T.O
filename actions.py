@@ -25,8 +25,11 @@ class actionsSaito:
 
         print("Caso queira ver os comandos, é só falar 'comandos' e aparecerá uma lista de comandos.")
 
-        with open("Dicionário.json", "r", encoding="utf-8") as dicionario:
-            self.dados = literal_eval(json.load(dicionario))
+        try:
+            with open("Dicionário.json", "r", encoding="utf-8") as dicionario:
+                self.dados = literal_eval(json.load(dicionario))
+
+        except: pass
 
     def gravarUsuario(self):
         import config
@@ -105,8 +108,10 @@ class actionsSaito:
 
     def wikipedia(self, comando):
         try:
-            pesquisa = str(comando).replace("pesquisar na wikipédia ", "")
-            pesquisa = str(pesquisa).replace("pesquise na wikipédia ", "")
+            pesquisa = str(comando).replace("pesquisar", "")
+            pesquisa = str(comando).replace("pesquise", "")
+            pesquisa = str(pesquisa).replace("wikipédia ", "")
+            pesquisa = str(pesquisa).replace("na", "")
             pesquisa.strip()
 
             self.falar("Só um momento, estou procurando por " + pesquisa)
@@ -116,41 +121,14 @@ class actionsSaito:
         except:
             self.falar("Não achei o resultado '{}' na wikipédia.".format(pesquisa))
 
-    def tocarMusica(self, comando):   #Falta implementar no main.py
+    def tocarMusica(self, comando): 
         musica = str(comando).replace("tocar música ", "")
         pywhatkit.playonyt(musica)
         self.falar("Reproduzindo a música " + musica)
 
-    def aprender(self):
-        self.falar("Qual é a categoria?")
-        categoria = self.ouvir()
-        self.falar("Tudo bem, qual é o ítem que gostaria de aprender?")
-        chave = self.ouvir()
-        self.falar("Qual o valor que você quer atribuir a {}?".format(chave))
-        try:
-            significado = self.ouvir()
-        except:
-            self.falar("Desculpe, não entendi o que disse, poderia escrever para mim?")
-            significado = input("Digite o local do arquivo, um link ou um significado: ")
-
-
-
-        try:
-            self.dados[categoria][chave] = significado
-        except:
-            self.dados[categoria] = {}
-            self.dados[categoria][chave] = significado
-
-        with open(os.getcwd() +"/Dicionário.json", "w", encoding="utf-8") as dicionario:
-            json.dump(str(self.dados).lower().replace('"', ''), dicionario , indent=2, ensure_ascii=False)
-            self.falar("Entendi! Já armazenei essa informação!")
-
     def perguntas(self):
         pass
-
-    def abrirPlanilha(self):
-        pass
-
+    
     def senhas(self):
         with open(os.getcwd() +"/senhas.json", "w", encoding="utf-8") as senhas:
             senhas = print(literal_eval(json.load(senhas)))
@@ -205,10 +183,7 @@ class actionsSaito:
             
         Abrir Softwares;
             #Em desenvolvimento;
-            
-        Aprender;
-            #Em desenvolvimento;
-            
+                        
         Ouvir Músicas;
             Diga "Tocar música" e o nome da música;
            

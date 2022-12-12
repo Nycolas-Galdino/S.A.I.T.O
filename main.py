@@ -32,10 +32,6 @@ class Saito(actions):
                 sleep (10)
                 i=0
 
-                #Adiciona uma chave com significado ao Dicionário.json
-            if "aprender" in frase:
-                self.aprender()
-                i=0
 
                 #Pesquisa no Google/Wikipédia a frase dita pelo usuário.
             if "pesquisar" in frase or "pesquise" in frase:
